@@ -8,7 +8,7 @@
         this.stripe = null
         this.card = null
 
-        $('[name=payment][value=stripe]', this.$checkoutForm).on('change', $.proxy(this.init, this))
+        $('[name=payment][value=' + this.$el.data('triggerCondition').replace('value[', '').replace(']', '') + ']', this.$checkoutForm).on('change', $.proxy(this.init, this))
     }
 
     ProcessStripe.prototype.init = function () {
