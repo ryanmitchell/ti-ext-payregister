@@ -7,16 +7,18 @@
         this.$checkoutForm = this.$el.closest('#checkout-form')
         this.stripe = null
         this.card = null
-
-        $('[name=payment][value=stripe]', this.$checkoutForm).on('change', $.proxy(this.init, this))
-    }
-
-    ProcessStripe.prototype.init = function () {
-        if (this.stripe !== null || !$(this.options.cardSelector).length)
-            return
+        this.code = this.$el.data('triggerCondition').replace('value[', '').replace(']', '')
 
         if (this.options.publishableKey === undefined)
             throw new Error('Missing stripe publishable key')
+                        
+        $('[name=payment][value=' + this.code + ']', this.$checkoutForm).on('change', $.proxy(this.init, this))
+    }
+
+    ProcessStripe.prototype.init = function () {
+	    	    
+        if (this.stripe !== null)
+            return
 
         // Create a Stripe client.
         this.stripe = Stripe(this.options.publishableKey)
@@ -47,7 +49,7 @@
             $form = this.$checkoutForm,
             $paymentInput = $form.find('input[name="payment"]:checked')
 
-        if ($paymentInput.val() !== 'stripe') return
+        if ($paymentInput.val() !== this.code) return
 
         // Prevent the form from submitting with the default action
         event.preventDefault()
